@@ -54,6 +54,15 @@ tuned NLM (15.5 dB). Dose-matched specialists beat the range-trained
 model at their own dose by 0.6 to 1.0 dB; range training buys the rest
 of the dose axis for that price (`configs/cross_dose.yaml`).
 
+**5. The advantage is also conditional on geometry.** On a lattice
+denser than anything in training (spacing 9 px vs 12), the CNN falls
+below the tuned Gaussian by 2.8 dB at dose 5 and is the only method
+that loses detections (F1 0.958 vs 0.998); a wider probe costs it
+4.5 dB at dose 50. Sparser lattices, quadrupled vacancies, and a
+fainter second species stay clearly in its favour
+(`configs/off_geometry.yaml`). The learned prior has a measurable
+range of validity, and the benchmark maps its edges.
+
 ![Cross-dose generalization: fixed-dose models against the range-trained model and tuned NLM](figures/cross_dose.png)
 
 ## Install and reproduce
@@ -62,8 +71,8 @@ of the dose axis for that price (`configs/cross_dose.yaml`).
 git clone https://github.com/aamirmalik-dr/stem-denoising-restoration
 cd stem-denoising-restoration
 python -m venv .venv && .venv/Scripts/activate   # or source .venv/bin/activate
-pip install -e .
-pytest                                            # 43 tests
+pip install -e ".[dev]"                           # [dev] brings pytest, ruff, black
+pytest                                            # 45 tests
 ```
 
 Quick start on the committed sample data (no downloads, no training):
@@ -82,6 +91,7 @@ python scripts/train_all.py
 stemdenoise benchmark configs/dose_sweep.yaml
 stemdenoise benchmark configs/detection_tuned.yaml
 stemdenoise benchmark configs/cross_dose.yaml
+stemdenoise benchmark configs/off_geometry.yaml
 python scripts/check_scale_robustness.py
 python scripts/make_figures.py
 ```
@@ -109,12 +119,24 @@ checkpoints are described in [models/MODEL_CARD.md](models/MODEL_CARD.md).
   Hungarian-matched detection scoring with border exclusion.
 - `stemdenoise.benchmark`: the config-driven harness; per-condition
   tuning of classical methods (for PSNR or for F1) on separate tuning
-  fields, with chosen parameters written into the results JSON.
+  fields, with chosen parameters written into the results JSON, and
+  inline lattice variants in configs for off-distribution checks.
 - A CLI (`stemdenoise simulate | denoise | train | benchmark`) and a
   bring-your-own-data path (`stemdenoise.io`) for `.npy`, `.npz`,
   `.png`, `.tif` images of unknown scale.
 
 ## Scope, honestly
+
+A note on units: microscopists quote dose as electrons per square
+angstrom; this benchmark sweeps expected counts in the brightest pixel
+of a column peak instead. The two are related through pixel size, probe
+current, dwell time, and detector collection efficiency, none of which
+this simulator fixes, so no conversion is quoted. Peak-pixel counts is
+the quantity that directly sets the shot-noise statistics the denoisers
+fight, which makes it the right independent variable for this
+comparison; mapping a real acquisition onto the sweep means estimating
+the counts at a bright column in your own frame
+(`stemdenoise.io.estimate_dose` does this).
 
 All data is synthetic. The simulator captures the parts of the problem
 that make low-dose restoration hard (shot noise at single-digit counts,

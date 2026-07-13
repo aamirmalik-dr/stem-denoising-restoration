@@ -76,6 +76,21 @@ def main() -> None:
     print("\n### Cross-dose: PSNR (dB), hexagonal\n")
     print(table(cross, cross_methods, doses, "psnr", ".2f"))
 
+    off = json.loads(Path("results/off_geometry.json").read_text())["results"]
+    off_methods = ["raw", "gaussian", "nlm", "cnn_supervised"]
+    print("\n### Off-geometry: PSNR / F1 per variant\n")
+    variants = list(dict.fromkeys(r["preset"] for r in off))
+    by = {(r["preset"], r["method"], r["dose"]): r for r in off}
+    header = "| Variant | Dose | " + " | ".join(LABEL.get(m, m) for m in off_methods) + " |"
+    print(header)
+    print("|---" * (len(off_methods) + 2) + "|")
+    for v in variants:
+        for d in (5, 50):
+            cells = [
+                f"{by[(v, m, d)]['psnr']:.1f} / {by[(v, m, d)]['f1']:.3f}" for m in off_methods
+            ]
+            print(f"| {v} | {d} | " + " | ".join(cells) + " |")
+
 
 if __name__ == "__main__":
     main()

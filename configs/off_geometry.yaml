@@ -1,0 +1,27 @@
+# Off-distribution geometry check: the CNNs were trained only on the two
+# built-in presets (hexagonal spacing 12, binary_square spacing 14,
+# probe sigma 2.2, faint weight 0.3). Each variant below changes one
+# geometric property outside that training family; classical baselines
+# are tuned per condition as usual. This is where the learned prior is
+# expected to fail, and the benchmark reports it either way.
+# faint weight 0.2 (not lower) keeps the faint species above the fixed
+# detector's relative threshold of 0.15, so the score measures the
+# denoiser rather than a detector-threshold artifact.
+name: off_geometry
+seed: 42
+presets:
+  - {name: hex_dense9, kind: hexagonal, spacing_px: 9.0}
+  - {name: hex_sparse16, kind: hexagonal, spacing_px: 16.0}
+  - {name: hex_vacancy12, kind: hexagonal, vacancy_frac: 0.12}
+  - {name: hex_probe30, kind: hexagonal, probe_sigma_px: 3.0}
+  - {name: bin_faint20, kind: binary_square, spacing_px: 14.0, faint_weight: 0.2}
+doses: [5, 50]
+n_eval_fields: 6
+n_tune_fields: 2
+field_size: 256
+tolerance_px: 3.0
+methods:
+  - {name: raw}
+  - {name: gaussian, tune: true}
+  - {name: nlm, tune: true}
+  - {name: cnn_supervised, checkpoint: models/unet_supervised.pt}

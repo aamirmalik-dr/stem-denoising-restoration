@@ -19,6 +19,7 @@ python scripts/train_all.py
 stemdenoise benchmark configs/dose_sweep.yaml
 stemdenoise benchmark configs/detection_tuned.yaml
 stemdenoise benchmark configs/cross_dose.yaml
+stemdenoise benchmark configs/off_geometry.yaml
 python scripts/check_scale_robustness.py
 python scripts/make_figures.py
 ```
@@ -165,7 +166,58 @@ Three readings, two of them against the CNN:
 3. Detection is far more forgiving than fidelity: even badly mismatched
    models keep F1 at or above 0.972 on this lattice.
 
-## 5. Scale-robustness check (`scripts/check_scale_robustness.py`)
+## 5. Off-distribution geometry (`configs/off_geometry.yaml`)
+
+The CNNs were trained only on the two built-in presets (hexagonal
+spacing 12 px, binary spacing 14 px, probe sigma 2.2 px, faint weight
+0.3). Every benchmark above evaluates on those same presets, which a
+skeptic should call out: the learned prior is being tested exactly
+in-distribution. This config changes one geometric property at a time
+outside the training family and lets the tuned classical methods
+compete as usual. PSNR / detection F1 at each dose:
+
+| Variant (change vs training) | Dose | raw | Gaussian (tuned) | NLM + VST (tuned) | CNN supervised |
+|---|---|---|---|---|---|
+| hex_dense9 (spacing 12 to 9) | 5 | 11.9 / 0.998 | **21.4** / 0.998 | 17.8 / 0.998 | 18.6 / 0.958 |
+| hex_dense9 | 50 | 22.5 / 1.000 | 27.9 / 1.000 | 27.2 / 1.000 | **29.5** / 0.999 |
+| hex_sparse16 (spacing 12 to 16) | 5 | 15.0 / 0.934 | 25.4 / 0.967 | 22.0 / 0.997 | **29.1** / 0.996 |
+| hex_sparse16 | 50 | 26.4 / 0.999 | 32.4 / 0.999 | 31.7 / 1.000 | **38.3** / 0.999 |
+| hex_vacancy12 (3% to 12% vacancies) | 5 | 14.0 / 0.985 | 23.8 / 0.995 | 20.2 / 0.998 | **31.9** / 0.999 |
+| hex_vacancy12 | 50 | 24.8 / 0.999 | 30.6 / 0.999 | 29.8 / 1.000 | **41.1** / 0.999 |
+| hex_probe30 (probe sigma 2.2 to 3.0) | 5 | 11.8 / 0.998 | **22.9** / 0.998 | 18.9 / 0.998 | 22.6 / 0.998 |
+| hex_probe30 | 50 | 22.4 / 1.000 | **29.9** / 0.999 | 28.5 / 1.000 | 25.3 / 1.000 |
+| bin_faint20 (faint weight 0.3 to 0.2) | 5 | 13.2 / 0.793 | 23.2 / 0.702 | 19.5 / 0.668 | **29.5** / 0.976 |
+| bin_faint20 | 50 | 24.1 / 0.849 | 29.9 / 0.766 | 28.2 / 0.670 | **36.7** / 0.957 |
+
+(The faint variant uses weight 0.2 rather than something smaller
+because the fixed detector's relative threshold is 0.15; at weight 0.15
+the faint species sits exactly at threshold and every method's recall,
+including on the raw image, is throttled by the detector rather than
+the denoiser.)
+
+Readings:
+
+1. **The learned advantage inverts on a denser lattice.** At spacing
+   9 px and dose 5, the CNN drops below the tuned Gaussian by 2.8 dB
+   and is the only method that loses detections (F1 0.958 vs 0.998).
+   It has learned the training lattice's length scale, and columns
+   closer than that get partially merged.
+2. **A wider probe also breaks the fidelity advantage.** At probe sigma
+   3.0 and dose 50 the CNN trails the tuned Gaussian by 4.5 dB (it
+   sharpens peaks toward the shape it was trained on), although its
+   localization RMSE stays best.
+3. **Milder shifts are fine.** Sparser lattices, four times the vacancy
+   rate, and a fainter second species all keep the CNN clearly ahead;
+   the faint-species detection gap actually widens at weight 0.2
+   (F1 0.976 vs 0.793 raw at dose 5).
+
+The honest summary: the CNN's edge comes from a structural prior, and
+that prior has a range of validity roughly bracketed by these variants.
+For data whose geometry is unknown or unlike the training family, the
+variance-stabilized classical methods degrade predictably; the CNN does
+not.
+
+## 6. Scale-robustness check (`scripts/check_scale_robustness.py`)
 
 The benchmark hands the CNN the true dose for input normalization,
 which real data does not provide. Re-running with the dose estimated
@@ -180,8 +232,9 @@ To keep the comparison honest in both directions: the tuned Gaussian is
 within 0.008 F1 of the CNN on hexagonal detection at every dose above 2
 while costing microseconds and having one interpretable parameter; NLM
 overtakes the Gaussian as the best classical option by PSNR at the top
-of the range (36.7 dB at dose 500 on the hexagonal lattice); and at
-dose 2 a mismatched CNN is worse than any
+of the range (36.7 dB at dose 500 on the hexagonal lattice); the tuned
+Gaussian beats the CNN outright on a lattice denser than the CNN's
+training family and under a wider probe (section 5); and at dose 2 a mismatched CNN is worse than any
 tuned classical method. If the downstream task is detection on a
 well-separated single-species lattice at moderate dose, a fixed
 detector on the raw image is already near ceiling and no restoration

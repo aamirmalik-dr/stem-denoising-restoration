@@ -1,0 +1,543 @@
+{
+  "config": {
+    "name": "off_geometry",
+    "seed": 42,
+    "presets": [
+      {
+        "name": "hex_dense9",
+        "kind": "hexagonal",
+        "spacing_px": 9.0
+      },
+      {
+        "name": "hex_sparse16",
+        "kind": "hexagonal",
+        "spacing_px": 16.0
+      },
+      {
+        "name": "hex_vacancy12",
+        "kind": "hexagonal",
+        "vacancy_frac": 0.12
+      },
+      {
+        "name": "hex_probe30",
+        "kind": "hexagonal",
+        "probe_sigma_px": 3.0
+      },
+      {
+        "name": "bin_faint20",
+        "kind": "binary_square",
+        "spacing_px": 14.0,
+        "faint_weight": 0.2
+      }
+    ],
+    "doses": [
+      5,
+      50
+    ],
+    "n_eval_fields": 6,
+    "n_tune_fields": 2,
+    "field_size": 256,
+    "tolerance_px": 3.0,
+    "methods": [
+      {
+        "name": "raw"
+      },
+      {
+        "name": "gaussian",
+        "tune": true
+      },
+      {
+        "name": "nlm",
+        "tune": true
+      },
+      {
+        "name": "cnn_supervised",
+        "checkpoint": "models/unet_supervised.pt"
+      }
+    ]
+  },
+  "config_file": "off_geometry.yaml",
+  "elapsed_s": 40.8,
+  "results": [
+    {
+      "preset": "hex_dense9",
+      "dose": 5,
+      "method": "raw",
+      "psnr": 11.898859065300597,
+      "ssim": 0.5274848916993344,
+      "precision": 0.9979165492560123,
+      "recall": 0.9979132560749119,
+      "f1": 0.9979138452235409,
+      "rmse_px": 0.5267759027111604
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 5,
+      "method": "gaussian",
+      "psnr": 21.38411635945094,
+      "ssim": 0.896200031765694,
+      "precision": 0.9976135227087708,
+      "recall": 0.9976107757361339,
+      "f1": 0.9976113551721261,
+      "rmse_px": 0.5132626143569611,
+      "tuned_param": 1.2,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 5,
+      "method": "nlm",
+      "psnr": 17.815755525950312,
+      "ssim": 0.7834870527575467,
+      "precision": 0.9991016866821933,
+      "recall": 0.9967146469598726,
+      "f1": 0.997906007150377,
+      "rmse_px": 0.6852742196057809,
+      "tuned_param": 0.4,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 5,
+      "method": "cnn_supervised",
+      "psnr": 18.634185555058025,
+      "ssim": 0.8098460196629337,
+      "precision": 0.9961434860662556,
+      "recall": 0.92269299441999,
+      "f1": 0.9579971527784461,
+      "rmse_px": 0.9006216233353569
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 50,
+      "method": "raw",
+      "psnr": 22.49111315066783,
+      "ssim": 0.9205582843654656,
+      "precision": 0.9997013142174432,
+      "recall": 0.999702380952381,
+      "f1": 0.9997015806607169,
+      "rmse_px": 0.21570146019077618
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 50,
+      "method": "gaussian",
+      "psnr": 27.86435678696805,
+      "ssim": 0.9777511631422285,
+      "precision": 0.9994042256850606,
+      "recall": 0.9997029114676174,
+      "f1": 0.9995531696155339,
+      "rmse_px": 0.22631023533160288,
+      "tuned_param": 0.8,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 50,
+      "method": "nlm",
+      "psnr": 27.16710957417504,
+      "ssim": 0.9759394849793485,
+      "precision": 0.9997007779772592,
+      "recall": 0.9994031589296402,
+      "f1": 0.9995518354690672,
+      "rmse_px": 0.2724718115044708,
+      "tuned_param": 1.0,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_dense9",
+      "dose": 50,
+      "method": "cnn_supervised",
+      "psnr": 29.502497856533225,
+      "ssim": 0.982515117709839,
+      "precision": 0.9997029114676174,
+      "recall": 0.9988084513496384,
+      "f1": 0.9992547495529185,
+      "rmse_px": 0.27991418179064353
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 5,
+      "method": "raw",
+      "psnr": 15.032734886976902,
+      "ssim": 0.2969395054308214,
+      "precision": 0.8788316336444396,
+      "recall": 0.9980039204436796,
+      "f1": 0.9344987293850932,
+      "rmse_px": 0.4704403163492385
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 5,
+      "method": "gaussian",
+      "psnr": 25.36319193768524,
+      "ssim": 0.7566344088722222,
+      "precision": 0.937971952774696,
+      "recall": 0.9980039204436796,
+      "f1": 0.9670116199220803,
+      "rmse_px": 0.4133223474673015,
+      "tuned_param": 1.2,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 5,
+      "method": "nlm",
+      "psnr": 21.95035094735665,
+      "ssim": 0.8039450858769451,
+      "precision": 0.9960127787589993,
+      "recall": 0.997011856951616,
+      "f1": 0.9965048198308208,
+      "rmse_px": 0.5684161709649681,
+      "tuned_param": 0.4,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 5,
+      "method": "cnn_supervised",
+      "psnr": 29.102632164790986,
+      "ssim": 0.8811303170878017,
+      "precision": 0.9940167707749673,
+      "recall": 0.9980039204436796,
+      "f1": 0.9960043554398393,
+      "rmse_px": 0.4036363394089049
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 50,
+      "method": "raw",
+      "psnr": 26.35401805912956,
+      "ssim": 0.7662594871005277,
+      "precision": 0.9980037056960134,
+      "recall": 1.0,
+      "f1": 0.9989988545452905,
+      "rmse_px": 0.18678527078073673
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 50,
+      "method": "gaussian",
+      "psnr": 32.43540002363033,
+      "ssim": 0.9520822670962407,
+      "precision": 0.9980037056960134,
+      "recall": 1.0,
+      "f1": 0.9989988545452905,
+      "rmse_px": 0.182712979086727,
+      "tuned_param": 0.8,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 50,
+      "method": "nlm",
+      "psnr": 31.704285252991166,
+      "ssim": 0.9746167344608395,
+      "precision": 0.9990138067061144,
+      "recall": 1.0,
+      "f1": 0.9995054401582592,
+      "rmse_px": 0.2030495148180487,
+      "tuned_param": 1.0,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_sparse16",
+      "dose": 50,
+      "method": "cnn_supervised",
+      "psnr": 38.25413915112578,
+      "ssim": 0.9874715032281177,
+      "precision": 0.998989898989899,
+      "recall": 1.0,
+      "f1": 0.9994934143870314,
+      "rmse_px": 0.168407710943957
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 5,
+      "method": "raw",
+      "psnr": 13.96168220915827,
+      "ssim": 0.40871747986338375,
+      "precision": 0.9721121679482154,
+      "recall": 0.9982302873080867,
+      "f1": 0.9849729232336221,
+      "rmse_px": 0.45029493720738173
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 5,
+      "method": "gaussian",
+      "psnr": 23.835205155426774,
+      "ssim": 0.8286791091587494,
+      "precision": 0.9915998636188736,
+      "recall": 0.9976495672151716,
+      "f1": 0.9945919877329619,
+      "rmse_px": 0.40328911428842834,
+      "tuned_param": 1.2,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 5,
+      "method": "nlm",
+      "psnr": 20.164782689806373,
+      "ssim": 0.8011368756707844,
+      "precision": 0.9975653975653976,
+      "recall": 0.9982166692669058,
+      "f1": 0.9978882422779735,
+      "rmse_px": 0.5545800488471057,
+      "tuned_param": 0.4,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 5,
+      "method": "cnn_supervised",
+      "psnr": 31.887885474266643,
+      "ssim": 0.9803288463947416,
+      "precision": 0.9987654320987653,
+      "recall": 0.9988385598141697,
+      "f1": 0.9987976707307563,
+      "rmse_px": 0.3228384972048732
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 50,
+      "method": "raw",
+      "psnr": 24.839494964827168,
+      "ssim": 0.8375107691403775,
+      "precision": 0.998817833113249,
+      "recall": 0.9994026284348866,
+      "f1": 0.9991097168941717,
+      "rmse_px": 0.18694655371823332
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 50,
+      "method": "gaussian",
+      "psnr": 30.618583574356336,
+      "ssim": 0.9648185657080982,
+      "precision": 0.998817833113249,
+      "recall": 0.9994026284348866,
+      "f1": 0.9991097168941717,
+      "rmse_px": 0.1805555974648315,
+      "tuned_param": 0.8,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 50,
+      "method": "nlm",
+      "psnr": 29.748770960553788,
+      "ssim": 0.9746151905727399,
+      "precision": 1.0,
+      "recall": 0.9994089834515366,
+      "f1": 0.9997039668442866,
+      "rmse_px": 0.20201190924229162,
+      "tuned_param": 1.0,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_vacancy12",
+      "dose": 50,
+      "method": "cnn_supervised",
+      "psnr": 41.11077704674403,
+      "ssim": 0.9962114026482455,
+      "precision": 0.9994152046783625,
+      "recall": 0.9994026284348866,
+      "f1": 0.9994078664365444,
+      "rmse_px": 0.16209472056763566
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 5,
+      "method": "raw",
+      "psnr": 11.773492117812106,
+      "ssim": 0.4294331429785334,
+      "precision": 0.9967305853659275,
+      "recall": 0.9994692144373674,
+      "f1": 0.998094112147263,
+      "rmse_px": 0.5423986537237436
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 5,
+      "method": "gaussian",
+      "psnr": 22.89889005050568,
+      "ssim": 0.8980900609425212,
+      "precision": 0.9972664798573497,
+      "recall": 0.9994692144373674,
+      "f1": 0.9983633622158866,
+      "rmse_px": 0.5150594535943226,
+      "tuned_param": 1.2,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 5,
+      "method": "nlm",
+      "psnr": 18.91951851595581,
+      "ssim": 0.7963494409148096,
+      "precision": 0.9978238425616052,
+      "recall": 0.9983734571233221,
+      "f1": 0.9980947882196748,
+      "rmse_px": 0.6913300233571825,
+      "tuned_param": 0.4,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 5,
+      "method": "cnn_supervised",
+      "psnr": 22.6101912964261,
+      "ssim": 0.8771229966378332,
+      "precision": 0.9972664798573497,
+      "recall": 0.9994692144373674,
+      "f1": 0.9983633622158866,
+      "rmse_px": 0.36906071557850945
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 50,
+      "method": "raw",
+      "psnr": 22.35295642109082,
+      "ssim": 0.8789094208091259,
+      "precision": 0.9994571118349619,
+      "recall": 1.0,
+      "f1": 0.9997281131049484,
+      "rmse_px": 0.2262987881347136
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 50,
+      "method": "gaussian",
+      "psnr": 29.85041150751137,
+      "ssim": 0.9782744409599345,
+      "precision": 0.9994553376906318,
+      "recall": 0.9994553376906318,
+      "f1": 0.9994553376906318,
+      "rmse_px": 0.2269882808399787,
+      "tuned_param": 0.8,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 50,
+      "method": "nlm",
+      "psnr": 28.48405676703861,
+      "ssim": 0.9749417443920044,
+      "precision": 0.9994571118349619,
+      "recall": 1.0,
+      "f1": 0.9997281131049484,
+      "rmse_px": 0.2762061247973692,
+      "tuned_param": 1.0,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "hex_probe30",
+      "dose": 50,
+      "method": "cnn_supervised",
+      "psnr": 25.325312455276432,
+      "ssim": 0.9345298481878189,
+      "precision": 0.9994571118349619,
+      "recall": 1.0,
+      "f1": 0.9997281131049484,
+      "rmse_px": 0.18474504801609457
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 5,
+      "method": "raw",
+      "psnr": 13.20712645027699,
+      "ssim": 0.4238486914611444,
+      "precision": 0.9969640106059909,
+      "recall": 0.660371355152545,
+      "f1": 0.7934272839030525,
+      "rmse_px": 0.6611455048376205
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 5,
+      "method": "gaussian",
+      "psnr": 23.160132167000967,
+      "ssim": 0.84807935565928,
+      "precision": 0.9979368384370145,
+      "recall": 0.5419400559307354,
+      "f1": 0.7021637186341958,
+      "rmse_px": 0.47525270209544157,
+      "tuned_param": 1.2,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 5,
+      "method": "nlm",
+      "psnr": 19.51512719311794,
+      "ssim": 0.6852997397582463,
+      "precision": 0.9977050452300215,
+      "recall": 0.5023192984517516,
+      "f1": 0.6682018335722425,
+      "rmse_px": 0.5820817333430016,
+      "tuned_param": 0.4,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 5,
+      "method": "cnn_supervised",
+      "psnr": 29.515478138784044,
+      "ssim": 0.9554072775950017,
+      "precision": 0.9958405632046725,
+      "recall": 0.9580053918828678,
+      "f1": 0.9764771506021644,
+      "rmse_px": 0.454524778202486
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 50,
+      "method": "raw",
+      "psnr": 24.051038257558627,
+      "ssim": 0.8650215707508888,
+      "precision": 0.9984215372046256,
+      "recall": 0.7412669879916028,
+      "f1": 0.8491088410448605,
+      "rmse_px": 0.28172100262838146
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 50,
+      "method": "gaussian",
+      "psnr": 29.89136036447508,
+      "ssim": 0.9677588422152307,
+      "precision": 0.9989711934156379,
+      "recall": 0.6237609063095438,
+      "f1": 0.7663618672714264,
+      "rmse_px": 0.23627313509498263,
+      "tuned_param": 0.8,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 50,
+      "method": "nlm",
+      "psnr": 28.18680167382813,
+      "ssim": 0.9216493198376501,
+      "precision": 0.997728169176426,
+      "recall": 0.5048661821217293,
+      "f1": 0.6704619525224381,
+      "rmse_px": 0.21047630687898158,
+      "tuned_param": 1.0,
+      "tune_metric": "psnr"
+    },
+    {
+      "preset": "bin_faint20",
+      "dose": 50,
+      "method": "cnn_supervised",
+      "psnr": 36.71437401693011,
+      "ssim": 0.9878148026145045,
+      "precision": 0.9984404605788336,
+      "recall": 0.9196841424916816,
+      "f1": 0.9570032987392527,
+      "rmse_px": 0.25903229524058496
+    }
+  ]
+}

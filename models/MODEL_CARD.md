@@ -48,7 +48,12 @@ noise is dominated by counting statistics. They were trained entirely
 on the two synthetic lattice presets in `stemdenoise.sim` and carry that
 structural prior: on very different structures (amorphous regions,
 grain boundaries, large defects, strong scan distortion) the prior is
-wrong and output should not be trusted quantitatively. The
+wrong and output should not be trusted quantitatively. The measured
+edges of that prior are in `results/off_geometry.json` (RESULTS.md
+section 5): on a lattice denser than the training family or under a
+wider probe, unet_supervised loses to a tuned Gaussian filter; sparser
+lattices, higher vacancy rates, and fainter species remain in its
+favour. The
 input must be roughly count-scaled; `stemdenoise.io.estimate_dose`
 provides the normalization for data of unknown scale, and
 `results/scale_robustness.json` shows the cost of using that estimate
