@@ -23,7 +23,7 @@ from .classical import CLASSICAL
 from .detect import detector_params_for, find_peaks
 from .metrics import filter_margin, match_positions, psnr, ssim
 from .net import load_checkpoint
-from .sim import add_noise, make_field, preset
+from .sim import LatticeSpec, add_noise, make_field, preset
 from .train import denoise_counts
 
 
@@ -37,12 +37,30 @@ def _condition_seed(base_seed: int, preset_name: str, dose: float, stream: str) 
     return zlib.crc32(key.encode()) % (2**31 - 1)
 
 
+def _resolve_preset(entry: str | dict) -> tuple[str, LatticeSpec]:
+    """Resolve a config presets entry to (condition name, lattice spec).
+
+    An entry is either the name of a built-in preset ("hexagonal",
+    "binary_square") or a mapping with a ``name`` key plus LatticeSpec
+    fields, which defines an inline lattice variant, e.g.::
+
+        - {name: hex_spacing9, kind: hexagonal, spacing_px: 9.0}
+
+    The name seeds the per-condition random stream, so built-in preset
+    names keep their historical seeding.
+    """
+    if isinstance(entry, str):
+        return entry, preset(entry)
+    entry = dict(entry)
+    name = entry.pop("name")
+    return name, LatticeSpec(**entry)
+
+
 def _make_eval_set(
-    base_seed: int, preset_name: str, dose: float, n: int, size: int, stream: str
+    base_seed: int, cond_name: str, spec: LatticeSpec, dose: float, n: int, size: int, stream: str
 ) -> list[tuple[np.ndarray, object]]:
     """Generate n (noisy, field) pairs for one condition, deterministically."""
-    rng = np.random.default_rng(_condition_seed(base_seed, preset_name, dose, stream))
-    spec = preset(preset_name)
+    rng = np.random.default_rng(_condition_seed(base_seed, cond_name, dose, stream))
     out = []
     for _ in range(n):
         fld = make_field(rng, size=size, dose=dose, spec=spec)
@@ -67,8 +85,8 @@ def _tune_classical(
     """
     entry = CLASSICAL[method]
 
-    def score_one(noisy: np.ndarray, fld) -> float:
-        est = entry["fn"](noisy, **{entry["param"]: _val})
+    def score_one(noisy: np.ndarray, fld, val: float) -> float:
+        est = entry["fn"](noisy, **{entry["param"]: val})
         if metric == "psnr":
             return psnr(fld.clean, est)
         if metric == "f1":
@@ -81,10 +99,10 @@ def _tune_classical(
         raise ValueError(f"unknown tune metric {metric!r}")
 
     best_val, best_score = entry["default"], -np.inf
-    for _val in entry["grid"]:
-        score = float(np.mean([score_one(noisy, f) for noisy, f in tune_set]))
+    for val in entry["grid"]:
+        score = float(np.mean([score_one(noisy, f, val) for noisy, f in tune_set]))
         if score > best_score:
-            best_val, best_score = _val, score
+            best_val, best_score = val, score
     return best_val
 
 
@@ -129,16 +147,16 @@ def run_benchmark(config_path: str | Path, out_path: str | Path | None = None) -
             models[m["name"]] = load_checkpoint(m["checkpoint"])
 
     rows = []
-    for preset_name in cfg["presets"]:
-        spec = preset(preset_name)
+    for preset_entry in cfg["presets"]:
+        cond_name, spec = _resolve_preset(preset_entry)
         det_kw = detector_params_for(spec.spacing_px, spec.probe_sigma_px)
         margin = spec.spacing_px / 2.0
         for dose in cfg["doses"]:
             eval_set = _make_eval_set(
-                cfg["seed"], preset_name, dose, cfg["n_eval_fields"], cfg["field_size"], "eval"
+                cfg["seed"], cond_name, spec, dose, cfg["n_eval_fields"], cfg["field_size"], "eval"
             )
             tune_set = _make_eval_set(
-                cfg["seed"], preset_name, dose, cfg["n_tune_fields"], cfg["field_size"], "tune"
+                cfg["seed"], cond_name, spec, dose, cfg["n_tune_fields"], cfg["field_size"], "tune"
             )
             for m in cfg["methods"]:
                 tuned = None
@@ -171,13 +189,13 @@ def run_benchmark(config_path: str | Path, out_path: str | Path | None = None) -
                     k: float(np.nanmean([p[k] for p in per_field]))
                     for k in ("psnr", "ssim", "precision", "recall", "f1", "rmse_px")
                 }
-                row = {"preset": preset_name, "dose": dose, "method": m["name"], **agg}
+                row = {"preset": cond_name, "dose": dose, "method": m["name"], **agg}
                 if tuned is not None:
                     row["tuned_param"] = tuned
                     row["tune_metric"] = m.get("tune_metric", "psnr")
                 rows.append(row)
                 print(
-                    f"{preset_name:>14} dose {dose:>6g} {m['name']:>14}: "
+                    f"{cond_name:>14} dose {dose:>6g} {m['name']:>14}: "
                     f"psnr {agg['psnr']:6.2f} ssim {agg['ssim']:.3f} "
                     f"f1 {agg['f1']:.3f} rmse {agg['rmse_px']:.3f}px",
                     flush=True,
