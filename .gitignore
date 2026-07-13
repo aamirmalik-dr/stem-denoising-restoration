@@ -1,0 +1,21 @@
+# Environments and caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.egg-info/
+build/
+dist/
+
+# Full datasets and large artifacts stay out; the committed sample fields,
+# figures, results JSON and small checkpoints below are tracked on purpose.
+data/full/
+*.h5
+scratch/
+
+# OS noise
+Thumbs.db
+.DS_Store

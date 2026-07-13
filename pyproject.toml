@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stemdenoise"
+version = "0.1.0"
+description = "Restoration of low-dose HAADF-STEM images, evaluated by image fidelity and by what the restored image is for: finding atoms"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Aamir Malik" }]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "matplotlib>=3.7",
+    "torch>=2.0",
+    "pyyaml>=6.0",
+    "pillow>=10.0",
+    "scikit-image>=0.22",
+    "PyWavelets>=1.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4",
+    "black>=24.0",
+    "nbclient>=0.9",
+    "nbformat>=5.9",
+    "ipykernel>=6.25",
+]
+
+[project.scripts]
+stemdenoise = "stemdenoise.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

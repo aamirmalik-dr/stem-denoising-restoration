@@ -1,0 +1,59 @@
+{
+  "n_fields": 4,
+  "results": [
+    {
+      "preset": "hexagonal",
+      "dose": 2.0,
+      "mean_estimated_dose": 2.196633859745484,
+      "psnr_true_dose": 27.93088503576145,
+      "psnr_estimated_dose": 27.46325501415813,
+      "f1_true_dose": 0.9967180738268455,
+      "f1_estimated_dose": 0.9971259019881155
+    },
+    {
+      "preset": "hexagonal",
+      "dose": 10.0,
+      "mean_estimated_dose": 9.299287119104182,
+      "psnr_true_dose": 34.70768574256206,
+      "psnr_estimated_dose": 34.49186721157146,
+      "f1_true_dose": 0.9995854063018241,
+      "f1_estimated_dose": 0.9995854063018241
+    },
+    {
+      "preset": "hexagonal",
+      "dose": 150.0,
+      "mean_estimated_dose": 130.0998750909886,
+      "psnr_true_dose": 44.796780003350726,
+      "psnr_estimated_dose": 43.122467555515065,
+      "f1_true_dose": 0.9995987158908507,
+      "f1_estimated_dose": 0.9995987158908507
+    },
+    {
+      "preset": "binary_square",
+      "dose": 2.0,
+      "mean_estimated_dose": 2.197425336988604,
+      "psnr_true_dose": 27.18172751454573,
+      "psnr_estimated_dose": 26.849824233266656,
+      "f1_true_dose": 0.9935339964661529,
+      "f1_estimated_dose": 0.9928942655251116
+    },
+    {
+      "preset": "binary_square",
+      "dose": 10.0,
+      "mean_estimated_dose": 9.240043639795754,
+      "psnr_true_dose": 33.261541744136395,
+      "psnr_estimated_dose": 33.020427990979854,
+      "f1_true_dose": 0.992392530098526,
+      "f1_estimated_dose": 0.9926147127350089
+    },
+    {
+      "preset": "binary_square",
+      "dose": 150.0,
+      "mean_estimated_dose": 130.1244704791197,
+      "psnr_true_dose": 42.89790865783097,
+      "psnr_estimated_dose": 42.05360140759688,
+      "f1_true_dose": 0.9785709096072944,
+      "f1_estimated_dose": 0.9760554113375465
+    }
+  ]
+}

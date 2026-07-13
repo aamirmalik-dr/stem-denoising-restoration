@@ -1,0 +1,17 @@
+# Cross-dose generalization check: is the CNN advantage just matched
+# training dose? Two models trained at a single fixed dose (10 and 150)
+# are evaluated across the whole range against the range-trained model
+# and the per-dose-tuned NLM baseline.
+name: cross_dose
+seed: 42
+presets: [hexagonal]
+doses: [2, 5, 10, 20, 50, 150, 500]
+n_eval_fields: 6
+n_tune_fields: 2
+field_size: 256
+tolerance_px: 3.0
+methods:
+  - {name: nlm, tune: true}
+  - {name: cnn_supervised, checkpoint: models/unet_supervised.pt}
+  - {name: cnn_fixed_low, checkpoint: models/unet_fixed_low.pt}
+  - {name: cnn_fixed_high, checkpoint: models/unet_fixed_high.pt}

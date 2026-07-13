@@ -1,0 +1,19 @@
+# Fair-tuning check on the lattice with a faint sublattice: classical
+# methods tuned directly for detection F1 (not PSNR), so the CNN is
+# compared against classical baselines at their best operating point for
+# the metric that matters downstream. Companion to dose_sweep.yaml,
+# where the same methods are tuned for PSNR.
+name: detection_tuned
+seed: 42
+presets: [binary_square]
+doses: [2, 5, 10, 20, 50, 150, 500]
+n_eval_fields: 6
+n_tune_fields: 2
+field_size: 256
+tolerance_px: 3.0
+methods:
+  - {name: raw}
+  - {name: gaussian, tune: true, tune_metric: f1}
+  - {name: nlm, tune: true, tune_metric: f1}
+  - {name: wavelet, tune: true, tune_metric: f1}
+  - {name: cnn_supervised, checkpoint: models/unet_supervised.pt}
