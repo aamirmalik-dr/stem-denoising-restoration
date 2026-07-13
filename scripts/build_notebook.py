@@ -43,7 +43,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path.cwd().parent if Path.cwd().name == "notebooks" else Path.cwd()
-import sys, os
+import os
 os.chdir(ROOT)
 
 from stemdenoise import (
@@ -266,16 +266,20 @@ for dose in (2, 5, 10):
 ## 7. What to take away
 
 Read `RESULTS.md` for the full tables, including the binary lattice with
-its faint sublattice and the cross-dose generalization check
-(`configs/cross_dose.yaml`), which tests whether the CNN advantage is an
-artifact of matched training dose. The short version of the findings,
-each backed by a committed results file:
+its faint sublattice, the cross-dose generalization check
+(`configs/cross_dose.yaml`), and the off-distribution geometry check
+(`configs/off_geometry.yaml`), which map where the CNN advantage ends:
+a model trained at one dose collapses at another, and a lattice denser
+than the training family or a wider probe hands the win back to a tuned
+Gaussian filter. The short version of the findings, each backed by a
+committed results file:
 
 1. Fidelity and detection rank methods differently, and detection is the
    ranking a microscopist should care about.
 2. Properly variance-stabilized classical methods are competitive at
-   moderate and high dose; the learned models separate from them at the
-   photon-starved end.
+   moderate and high dose, and win outright when the data's geometry
+   leaves the CNN's training family; the learned models separate from
+   them at the photon-starved end, in distribution.
 3. Noise2Noise, trained with no clean images at all, tracks the
    supervised model closely, which is the practically relevant result
    since real paired clean data barely exists.

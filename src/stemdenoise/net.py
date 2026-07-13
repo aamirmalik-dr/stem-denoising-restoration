@@ -79,7 +79,9 @@ def load_checkpoint(path: str) -> tuple[ResUNet, dict]:
     Returns:
         The model in eval mode and the stored metadata dict.
     """
-    ckpt = torch.load(path, map_location="cpu", weights_only=False)
+    # Checkpoints hold only tensors and plain Python types, so the safe
+    # weights_only loader is sufficient.
+    ckpt = torch.load(path, map_location="cpu", weights_only=True)
     model = ResUNet(base=ckpt["base"])
     model.load_state_dict(ckpt["state_dict"])
     model.eval()
