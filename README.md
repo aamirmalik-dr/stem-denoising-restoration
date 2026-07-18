@@ -1,7 +1,5 @@
 # stem-denoising-restoration
 
-*Origin: Originally developed during the 4th Summer School on ML/AI for Electron Microscopy (June 2026); refactored and open-sourced in July 2026.*
-
 Restoration of low-dose HAADF-STEM images, scored the way a
 microscopist would: not just by how clean the image looks (PSNR, SSIM)
 but by whether the atoms can still be found in it afterwards (detection
@@ -160,3 +158,7 @@ GitHub: https://github.com/aamirmalik-dr
 LinkedIn: https://linkedin.com/in/dr-aamirmalik
 
 MIT License.
+
+---
+
+*Refactored and engineered into this tested, reproducible project in July 2026, from work originally begun at the 4th Summer School on ML/AI for Electron Microscopy (June 2026).*
