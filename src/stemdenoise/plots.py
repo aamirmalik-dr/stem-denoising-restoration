@@ -130,6 +130,41 @@ def restoration_ladder(
     _save(fig, out_path)
 
 
+def restoration_quad(
+    images: list,
+    titles: list[str],
+    out_path: str | Path,
+    suptitle: str = "",
+) -> None:
+    """A single dose case as a square 2x2 grid, one labelled panel each.
+
+    Same scaling and colormap as a row of :func:`restoration_ladder` (shared
+    clean-image scale, inferno, nearest interpolation), so this panel reads
+    identically to the corresponding row of the dose-ladder hero.
+
+    Args:
+        images: Four 2D arrays in reading order (top-left, top-right,
+            bottom-left, bottom-right).
+        titles: One title per panel, same length as ``images``.
+        out_path: Output PNG path.
+        suptitle: Optional figure heading (used to name the dose case).
+    """
+    vmax = float(np.percentile(images[-1], 99.9))
+    fig, axes = plt.subplots(2, 2, figsize=(5.0, 5.4), squeeze=False)
+    flat = [axes[0][0], axes[0][1], axes[1][0], axes[1][1]]
+    for ax, img, title in zip(flat, images, titles):
+        ax.imshow(img, cmap="inferno", vmin=0, vmax=vmax, interpolation="nearest")
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_title(title, fontsize=11)
+    if suptitle:
+        fig.suptitle(suptitle, fontsize=12, y=0.99)
+    fig.tight_layout(pad=0.6)
+    # Clear the bottom-row titles off the dark edge of the panels above them.
+    fig.subplots_adjust(hspace=0.16)
+    _save(fig, out_path)
+
+
 def training_curves(histories: dict[str, list[tuple[int, float]]], out_path: str | Path) -> None:
     """Training loss against step for one or more runs, log-y."""
     fig, ax = plt.subplots(figsize=(6.0, 4.0))

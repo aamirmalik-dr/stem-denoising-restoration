@@ -15,38 +15,63 @@ import numpy as np
 from stemdenoise.benchmark import _condition_seed
 from stemdenoise.classical import nlm_denoise
 from stemdenoise.net import load_checkpoint
-from stemdenoise.plots import metric_vs_dose, restoration_ladder, training_curves
+from stemdenoise.plots import metric_vs_dose, restoration_ladder, restoration_quad, training_curves
 from stemdenoise.sim import add_noise, make_field, preset
 from stemdenoise.train import denoise_counts
 
 FIG = Path("figures")
 LADDER_DOSES = [2, 5, 20, 150]
+COL_TITLES = ["noisy input", "NLM + VST (tuned)", "CNN supervised", "ground truth"]
+
+
+def _tuned_nlm_params() -> dict:
+    return {
+        r["dose"]: r.get("tuned_param")
+        for r in json.loads(Path("results/dose_sweep.json").read_text())["results"]
+        if r["method"] == "nlm" and r["preset"] == "hexagonal"
+    }
+
+
+def _dose_panel(model, tuned: dict, spec, dose: int) -> dict:
+    """Build the four restoration images for one dose, identical to the hero row."""
+    # Same seed stream as the benchmark eval fields for this condition.
+    rng = np.random.default_rng(_condition_seed(42, "hexagonal", dose, "eval"))
+    fld = make_field(rng, size=192, dose=dose, spec=spec)
+    noisy = add_noise(fld.clean, rng)
+    nlm = nlm_denoise(noisy, h=tuned.get(dose, 0.8))
+    cnn = denoise_counts(model, noisy, dose=dose)
+    return {"dose": dose, "images": [noisy, nlm, cnn, fld.clean]}
 
 
 def hero_ladder() -> None:
     """Dose-ladder restoration triptych: noisy, tuned NLM, CNN, ground truth."""
     model, _ = load_checkpoint("models/unet_supervised.pt")
-    tuned = {
-        r["dose"]: r.get("tuned_param")
-        for r in json.loads(Path("results/dose_sweep.json").read_text())["results"]
-        if r["method"] == "nlm" and r["preset"] == "hexagonal"
-    }
+    tuned = _tuned_nlm_params()
     spec = preset("hexagonal")
-    panels = []
-    for dose in LADDER_DOSES:
-        # Same seed stream as the benchmark eval fields for this condition.
-        rng = np.random.default_rng(_condition_seed(42, "hexagonal", dose, "eval"))
-        fld = make_field(rng, size=192, dose=dose, spec=spec)
-        noisy = add_noise(fld.clean, rng)
-        nlm = nlm_denoise(noisy, h=tuned.get(dose, 0.8))
-        cnn = denoise_counts(model, noisy, dose=dose)
-        panels.append({"dose": dose, "images": [noisy, nlm, cnn, fld.clean]})
+    panels = [_dose_panel(model, tuned, spec, dose) for dose in LADDER_DOSES]
     restoration_ladder(
         panels,
         FIG / "dose_ladder_triptych.png",
-        col_titles=["noisy input", "NLM + VST (tuned)", "CNN supervised", "ground truth"],
+        col_titles=COL_TITLES,
     )
     print("wrote figures/dose_ladder_triptych.png")
+
+
+def dose2_grid() -> None:
+    """The dose-2 case alone as a square 2x2 grid for a single-image post.
+
+    Reuses the exact dose-2 row of the hero triptych, so the four panels match
+    that row image for image; only the layout differs.
+    """
+    model, _ = load_checkpoint("models/unet_supervised.pt")
+    panel = _dose_panel(model, _tuned_nlm_params(), preset("hexagonal"), 2)
+    restoration_quad(
+        panel["images"],
+        COL_TITLES,
+        FIG / "dose2_grid.png",
+        suptitle="Low-dose HAADF-STEM restoration, dose 2",
+    )
+    print("wrote figures/dose2_grid.png")
 
 
 def sweep_curves() -> None:
