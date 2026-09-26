@@ -1,6 +1,6 @@
 """stemdenoise: restoration of low-dose HAADF-STEM images, scored by fidelity and by atoms found."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .classical import gaussian_denoise, nlm_denoise, wavelet_denoise
 from .detect import find_peaks

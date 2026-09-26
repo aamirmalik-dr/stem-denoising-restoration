@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stemdenoise"
-version = "0.1.0"
+version = "0.1.1"
 description = "Restoration of low-dose HAADF-STEM images, evaluated by image fidelity and by what the restored image is for: finding atoms"
 readme = "README.md"
 requires-python = ">=3.10"
