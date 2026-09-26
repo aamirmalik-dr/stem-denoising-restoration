@@ -1,5 +1,7 @@
 # stem-denoising-restoration
 
+[![ci](https://github.com/aamirmalik-dr/stem-denoising-restoration/actions/workflows/ci.yml/badge.svg)](https://github.com/aamirmalik-dr/stem-denoising-restoration/actions/workflows/ci.yml)
+
 Restoration of low-dose HAADF-STEM images, scored the way a
 microscopist would: not just by how clean the image looks (PSNR, SSIM)
 but by whether the atoms can still be found in it afterwards (detection
